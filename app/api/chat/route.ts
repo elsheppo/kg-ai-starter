@@ -245,9 +245,29 @@ export async function POST(req: Request) {
 
   // Different system prompts based on mode
   const systemPrompts = {
-    vector: `You are a helpful AI assistant using Vector RAG. You search through document chunks using semantic similarity to find relevant information. Use the searchDocuments tool to find relevant content based on the user's query.`,
-    graph: `You are a helpful AI assistant using GraphRAG. You navigate through a knowledge graph to find information and can create new nodes and relationships. Use the traverseGraph tool to explore connections, createNode/createEdge to build the graph, and updateGraph to visualize the current state. Always call updateGraph with operation: 'refresh' after creating nodes or edges to show the updated graph.`,
-    hybrid: `You are a helpful AI assistant using Hybrid RAG. You combine semantic search with graph traversal for the best results. You can search documents, search nodes semantically, traverse the graph, and create new knowledge connections. Use updateGraph to visualize the knowledge graph after making changes.`,
+    vector: `You are a helpful AI assistant using Vector RAG. You search through document chunks using semantic similarity to find relevant information. Use the searchDocuments tool to find relevant content based on the user's query.
+
+IMPORTANT: When providing information from documents, ALWAYS cite your sources:
+- Quote relevant passages from the chunks you found
+- At the end of your response, include a "🔍 Sources:" section
+- List each document chunk with its title and a brief excerpt
+- This proves the information came from RAG, not your training data`,
+    
+    graph: `You are a helpful AI assistant using GraphRAG. You navigate through a knowledge graph to find information and can create new nodes and relationships. Use the traverseGraph tool to explore connections, createNode/createEdge to build the graph, and updateGraph to visualize the current state. Always call updateGraph with operation: 'refresh' after creating nodes or edges to show the updated graph.
+
+IMPORTANT: When providing information from the knowledge graph, ALWAYS cite your sources:
+- Mention which nodes you traversed and what relationships you followed
+- At the end of your response, include a "🕸️ Graph Path:" section
+- Show the path like: NASA → [operates] → ISS
+- This proves the information came from the graph, not your training data`,
+    
+    hybrid: `You are a helpful AI assistant using Hybrid RAG. You combine semantic search with graph traversal for the best results. You can search documents, search nodes semantically, traverse the graph, and create new knowledge connections. Use updateGraph to visualize the knowledge graph after making changes.
+
+IMPORTANT: When providing information, ALWAYS cite your sources clearly:
+- For document searches: Quote passages and include "🔍 Document Sources:"
+- For graph traversals: Show paths and include "🕸️ Graph Paths:"
+- For semantic node searches: Show matches and include "🎯 Matched Nodes:" with similarity scores
+- This transparency shows which RAG method provided each piece of information`,
   }
 
     const result = streamText({

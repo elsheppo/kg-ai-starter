@@ -89,6 +89,7 @@ export default function Home() {
                 </p>
               </div>
               <ChatInterface 
+                key={mode}
                 mode={mode} 
                 onGraphUpdate={setGraphData}
               />

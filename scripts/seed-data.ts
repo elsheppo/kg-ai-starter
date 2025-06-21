@@ -54,6 +54,8 @@ const DEMO_EDGES = [
   { source: nodeIdMap['apollo'], target: nodeIdMap['moon'], relationship: 'landed_on' },
   { source: nodeIdMap['nasa'], target: nodeIdMap['iss'], relationship: 'operates' },
   { source: nodeIdMap['spacex'], target: nodeIdMap['iss'], relationship: 'supplies' },
+  // Note: Laika is intentionally left unconnected as a teaching example
+  // Users can practice creating connections in the demo
 ]
 
 async function generateEmbedding(text: string): Promise<number[]> {
