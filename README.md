@@ -18,7 +18,7 @@ Perfect for hackathons, prototypes, and production applications!
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/kg-ai-starter
+git clone https://github.com/elsheppo/kg-ai-starter
 cd kg-ai-starter
 
 # Install dependencies
