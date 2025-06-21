@@ -82,12 +82,21 @@ export async function POST(req: Request) {
           // Search document chunks
           const { data, error } = await supabase.rpc('search_chunks_semantic', {
             query_embedding: embedding,
-            match_threshold: threshold,
-            match_count: limit,
+            match_threshold: threshold || 0.7,
+            match_count: limit || 5,
           })
 
           if (error) throw error
-          return data || []
+          
+          // Format results to include more details
+          const results = (data || []).map(chunk => ({
+            ...chunk,
+            document_title: chunk.document_title || 'Unknown Document',
+            excerpt: chunk.content.substring(0, 200) + '...',
+            similarity: chunk.similarity
+          }))
+          
+          return results
         }, 'searchDocuments'),
       }),
     } : {}),
@@ -248,10 +257,13 @@ export async function POST(req: Request) {
     vector: `You are a helpful AI assistant using Vector RAG. You search through document chunks using semantic similarity to find relevant information. Use the searchDocuments tool to find relevant content based on the user's query.
 
 IMPORTANT: When providing information from documents, ALWAYS cite your sources:
-- Quote relevant passages from the chunks you found
-- At the end of your response, include a "🔍 Sources:" section
-- List each document chunk with its title and a brief excerpt
-- This proves the information came from RAG, not your training data`,
+- ALWAYS use the searchDocuments tool before answering questions
+- If the search returns results, quote relevant passages from the chunks
+- If the search returns NO results, explicitly state "No documents found matching your query"
+- At the end of EVERY response, include a "🔍 Sources:" section
+- List each document chunk with title, excerpt, and similarity score
+- If no sources found, state "No RAG sources found - this answer is from general knowledge"
+- This transparency proves whether information came from RAG or training data`,
     
     graph: `You are a helpful AI assistant using GraphRAG. You navigate through a knowledge graph to find information and can create new nodes and relationships. Use the traverseGraph tool to explore connections, createNode/createEdge to build the graph, and updateGraph to visualize the current state. Always call updateGraph with operation: 'refresh' after creating nodes or edges to show the updated graph.
 
