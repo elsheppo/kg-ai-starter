@@ -399,11 +399,11 @@ async function semanticGraphSearch(query: string, depth: number = 2) {
   // 1. Get query embedding
   const embedding = await generateEmbedding(query)
   
-  // 2. Find similar nodes
+  // 2. Find similar nodes (with proper threshold)
   const { data: similarNodes } = await supabase.rpc('search_nodes_semantic', {
     query_embedding: embedding,
-    match_threshold: 0.7,
-    match_count: 5
+    match_threshold: 0.5,  // Lowered for better recall
+    match_count: 10       // Increased for more results
   })
   
   // 3. Expand each node
@@ -445,7 +445,7 @@ async function graphGuidedGeneration(topic: string) {
   
   // 4. Generate with context
   return await generateText({
-    model: openai('gpt-4'),
+    model: openai('gpt-4o'),
     prompt: `Given this knowledge graph context:\n${context}\n\nWrite about ${topic}:`,
   })
 }
@@ -472,12 +472,6 @@ async function graphGuidedGeneration(topic: string) {
 - Check browser console for errors
 - Ensure React Flow styles are loaded
 - Verify node/edge data format
-
-### Getting Help
-
-- Check the [GitHub Issues](your-repo/issues)
-- Review Supabase logs in your dashboard
-- Use browser DevTools to debug API calls
 
 ## Conclusion
 

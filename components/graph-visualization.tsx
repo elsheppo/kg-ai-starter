@@ -63,7 +63,7 @@ const nodeTypes: NodeTypes = {
 interface GraphVisualizationProps {
   data?: {
     nodes: Array<{ id: string; label: string; type?: string; description?: string }>
-    edges: Array<{ source: string; target: string; label?: string }>
+    edges?: Array<{ source: string; target: string; label?: string }>
   }
 }
 
@@ -103,7 +103,7 @@ export function GraphVisualization({ data }: GraphVisualizationProps) {
 
   // Update graph when data changes
   useEffect(() => {
-    if (data && data.nodes.length > 0) {
+    if (data && data.nodes && data.nodes.length > 0) {
       const flowNodes: Node[] = data.nodes.map((node) => ({
         id: node.id,
         type: 'custom',
@@ -115,7 +115,7 @@ export function GraphVisualization({ data }: GraphVisualizationProps) {
         position: { x: 0, y: 0 },
       }))
 
-      const flowEdges: Edge[] = data.edges.map((edge, idx) => ({
+      const flowEdges: Edge[] = (data.edges || []).map((edge, idx) => ({
         id: `edge-${idx}-${edge.source}-${edge.target}`,
         source: edge.source,
         target: edge.target,
