@@ -21,22 +21,20 @@ Perfect for hackathons, prototypes, and production applications!
 git clone https://github.com/elsheppo/kg-ai-starter
 cd kg-ai-starter
 
-# 2. Install dependencies
-npm install
-
-# 3. Set up environment
+# 2. Set up environment
 cp .env.local.example .env.local
 # Edit .env.local with your OpenAI and Supabase credentials
 
-# 4. Set up Supabase database (REQUIRED!)
+# 3. Set up Supabase database (REQUIRED!)
 # - Go to your Supabase project's SQL Editor
 # - Copy everything from supabase/schema.sql
 # - Paste and run it to create tables and functions
 
-# 5. Load demo data
-npm run seed
+# 4. Install dependencies and load demo data
+npm run setup
+# This runs both npm install and npm run seed
 
-# 6. Start the app!
+# 5. Start the app!
 npm run dev
 ```
 

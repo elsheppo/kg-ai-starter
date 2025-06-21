@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import OpenAI from 'openai'
 import fs from 'fs/promises'
 import path from 'path'
+import { randomUUID } from 'crypto'
 
 // Initialize clients
 const supabase = createClient(
@@ -13,32 +14,46 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 })
 
+// Create UUID mappings for consistent relationships
+const nodeIdMap: Record<string, string> = {
+  'nasa': randomUUID(),
+  'spacex': randomUUID(),
+  'mars': randomUUID(),
+  'artemis': randomUUID(),
+  'starship': randomUUID(),
+  'moon': randomUUID(),
+  'iss': randomUUID(),
+  'elon-musk': randomUUID(),
+  'laika': randomUUID(),
+  'apollo': randomUUID(),
+}
+
 // Demo data for immediate visual impact
 const DEMO_NODES = [
   // Space Exploration Theme
-  { id: 'nasa', label: 'NASA', type: 'organization', properties: { description: 'National Aeronautics and Space Administration, leading space exploration' } },
-  { id: 'spacex', label: 'SpaceX', type: 'organization', properties: { description: 'Private space company revolutionizing space travel' } },
-  { id: 'mars', label: 'Mars', type: 'concept', properties: { description: 'The Red Planet, target for human colonization' } },
-  { id: 'artemis', label: 'Artemis Program', type: 'technology', properties: { description: 'NASA\'s program to return humans to the Moon' } },
-  { id: 'starship', label: 'Starship', type: 'technology', properties: { description: 'SpaceX\'s fully reusable spacecraft' } },
-  { id: 'moon', label: 'Moon', type: 'concept', properties: { description: 'Earth\'s natural satellite' } },
-  { id: 'iss', label: 'International Space Station', type: 'technology', properties: { description: 'Orbital laboratory and space habitat' } },
-  { id: 'elon-musk', label: 'Elon Musk', type: 'person', properties: { description: 'CEO of SpaceX, visionary entrepreneur' } },
-  { id: 'laika', label: 'Laika', type: 'entity', properties: { description: 'First dog in space, Soviet space program' } },
-  { id: 'apollo', label: 'Apollo Program', type: 'technology', properties: { description: 'Historic program that landed humans on the Moon' } },
+  { id: nodeIdMap['nasa'], label: 'NASA', type: 'organization', properties: { description: 'National Aeronautics and Space Administration, leading space exploration' } },
+  { id: nodeIdMap['spacex'], label: 'SpaceX', type: 'organization', properties: { description: 'Private space company revolutionizing space travel' } },
+  { id: nodeIdMap['mars'], label: 'Mars', type: 'concept', properties: { description: 'The Red Planet, target for human colonization' } },
+  { id: nodeIdMap['artemis'], label: 'Artemis Program', type: 'technology', properties: { description: 'NASA\'s program to return humans to the Moon' } },
+  { id: nodeIdMap['starship'], label: 'Starship', type: 'technology', properties: { description: 'SpaceX\'s fully reusable spacecraft' } },
+  { id: nodeIdMap['moon'], label: 'Moon', type: 'concept', properties: { description: 'Earth\'s natural satellite' } },
+  { id: nodeIdMap['iss'], label: 'International Space Station', type: 'technology', properties: { description: 'Orbital laboratory and space habitat' } },
+  { id: nodeIdMap['elon-musk'], label: 'Elon Musk', type: 'person', properties: { description: 'CEO of SpaceX, visionary entrepreneur' } },
+  { id: nodeIdMap['laika'], label: 'Laika', type: 'entity', properties: { description: 'First dog in space, Soviet space program' } },
+  { id: nodeIdMap['apollo'], label: 'Apollo Program', type: 'technology', properties: { description: 'Historic program that landed humans on the Moon' } },
 ]
 
 const DEMO_EDGES = [
-  { source: 'nasa', target: 'artemis', relationship: 'operates' },
-  { source: 'nasa', target: 'apollo', relationship: 'conducted' },
-  { source: 'spacex', target: 'starship', relationship: 'develops' },
-  { source: 'spacex', target: 'mars', relationship: 'plans_mission_to' },
-  { source: 'elon-musk', target: 'spacex', relationship: 'founded' },
-  { source: 'artemis', target: 'moon', relationship: 'targets' },
-  { source: 'starship', target: 'mars', relationship: 'designed_for' },
-  { source: 'apollo', target: 'moon', relationship: 'landed_on' },
-  { source: 'nasa', target: 'iss', relationship: 'operates' },
-  { source: 'spacex', target: 'iss', relationship: 'supplies' },
+  { source: nodeIdMap['nasa'], target: nodeIdMap['artemis'], relationship: 'operates' },
+  { source: nodeIdMap['nasa'], target: nodeIdMap['apollo'], relationship: 'conducted' },
+  { source: nodeIdMap['spacex'], target: nodeIdMap['starship'], relationship: 'develops' },
+  { source: nodeIdMap['spacex'], target: nodeIdMap['mars'], relationship: 'plans_mission_to' },
+  { source: nodeIdMap['elon-musk'], target: nodeIdMap['spacex'], relationship: 'founded' },
+  { source: nodeIdMap['artemis'], target: nodeIdMap['moon'], relationship: 'targets' },
+  { source: nodeIdMap['starship'], target: nodeIdMap['mars'], relationship: 'designed_for' },
+  { source: nodeIdMap['apollo'], target: nodeIdMap['moon'], relationship: 'landed_on' },
+  { source: nodeIdMap['nasa'], target: nodeIdMap['iss'], relationship: 'operates' },
+  { source: nodeIdMap['spacex'], target: nodeIdMap['iss'], relationship: 'supplies' },
 ]
 
 async function generateEmbedding(text: string): Promise<number[]> {
