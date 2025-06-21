@@ -16,8 +16,6 @@ interface ChatInterfaceProps {
 
 export function ChatInterface({ mode, onGraphUpdate }: ChatInterfaceProps) {
   const [isTyping, setIsTyping] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const messagesContainerRef = useRef<HTMLDivElement>(null)
   
   const { messages, input, handleInputChange, handleSubmit, isLoading, setInput } = useChat({
     api: '/api/chat',
@@ -45,20 +43,7 @@ export function ChatInterface({ mode, onGraphUpdate }: ChatInterfaceProps) {
     }
   }
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  useEffect(() => {
-    // Only auto-scroll if user is near the bottom (within 100px)
-    const container = messagesContainerRef.current
-    if (container) {
-      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100
-      if (isNearBottom) {
-        scrollToBottom()
-      }
-    }
-  }, [messages])
+  // Removed auto-scroll - let users control their own scrolling
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -70,7 +55,7 @@ export function ChatInterface({ mode, onGraphUpdate }: ChatInterfaceProps) {
   return (
     <div className="flex flex-col h-[600px]">
       {/* Messages Area */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <div className="max-w-2xl mx-auto">
             <ExampleQueries mode={mode} onSelectQuery={handleSelectQuery} />
@@ -135,8 +120,6 @@ export function ChatInterface({ mode, onGraphUpdate }: ChatInterfaceProps) {
             </div>
           </div>
         )}
-        
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Area */}

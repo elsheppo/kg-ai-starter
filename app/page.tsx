@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ModeSwitcher, RAGMode } from '@/components/mode-switcher'
 import { ChatInterface } from '@/components/chat-interface'
 import { GraphVisualization } from '@/components/graph-visualization'
@@ -34,6 +34,14 @@ export default function Home() {
 
   const currentMode = modeDescriptions[mode]
   const Icon = currentMode.icon
+
+  // Load initial graph data
+  useEffect(() => {
+    fetch('/api/graph')
+      .then(res => res.json())
+      .then(data => setGraphData(data))
+      .catch(err => console.error('Failed to load graph:', err))
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 dark:from-neutral-950 dark:to-neutral-900">
