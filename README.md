@@ -29,6 +29,11 @@ cp .env.local.example .env.local
 # - Go to your Supabase project's SQL Editor
 # - Copy everything from supabase/schema.sql
 # - Paste and run it to create tables and functions
+# 
+# ⚠️ IMPORTANT: The schema must be run BEFORE npm setup!
+# If you modify schema.sql later, you must manually update 
+# your database - the seed script only inserts data, it does
+# NOT update table structures or functions.
 
 # 4. Install dependencies and load demo data
 npm run setup
@@ -39,6 +44,16 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and try the example queries! 🎉
+
+## ⚠️ Important Database Setup Note
+
+This starter kit uses Supabase's SQL schema for the knowledge graph. The schema (tables, functions, indexes) must be created through Supabase's SQL Editor **before** running the seed script.
+
+**Key points:**
+- `npm run setup` only inserts demo data - it does NOT create or update database structures
+- If you modify `supabase/schema.sql`, you must manually run the changes in Supabase
+- This is intentional - it gives you full control over your database schema
+- For production apps, consider implementing a proper migration system
 
 ## 🛠️ What's Included
 

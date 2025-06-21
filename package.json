@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "node scripts/seed.js",
-    "update-embeddings": "node scripts/update-embeddings.js",
     "setup": "npm install && npm run seed"
   },
   "dependencies": {
