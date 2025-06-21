@@ -14,24 +14,29 @@ A fully-functional AI application demonstrating three powerful RAG patterns:
 
 Perfect for hackathons, prototypes, and production applications!
 
-## 🎯 Quick Start (2 minutes!)
+## 🎯 Quick Start
 
 ```bash
-# Clone the repo
+# 1. Clone the repo
 git clone https://github.com/elsheppo/kg-ai-starter
 cd kg-ai-starter
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Set up your environment
+# 3. Set up environment
 cp .env.local.example .env.local
-# Add your OpenAI key and Supabase credentials
+# Edit .env.local with your OpenAI and Supabase credentials
 
-# Load demo data
+# 4. Set up Supabase database (REQUIRED!)
+# - Go to your Supabase project's SQL Editor
+# - Copy everything from supabase/schema.sql
+# - Paste and run it to create tables and functions
+
+# 5. Load demo data
 npm run seed
 
-# Start the app!
+# 6. Start the app!
 npm run dev
 ```
 
@@ -137,15 +142,25 @@ kg-ai-starter/
 - Add to `.env.local`
 
 **Supabase**:
-- Create project at [supabase.com](https://supabase.com)
-- Run the schema from `supabase/schema.sql`
-- Add credentials to `.env.local`
+1. Create project at [supabase.com](https://supabase.com)
+2. Go to SQL Editor in your project
+3. Create new query
+4. Copy entire contents of `supabase/schema.sql`
+5. Run it (this creates all tables and functions)
+6. Get your project URL and anon key from Settings → API
+7. Add to `.env.local`:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
+   ```
 
 ### 2. Load Demo Data
 
 ```bash
 npm run seed
 ```
+
+**Note**: This MUST be run AFTER setting up the database schema!
 
 This loads:
 - 10 space exploration nodes (NASA, SpaceX, Mars, etc.)
@@ -228,8 +243,6 @@ Contributions welcome! Please:
 ## 📚 Resources
 
 - [Tutorial Document](./TUTORIAL.md) - Complete build guide
-- [Presentation Slides](./presentation.html) - Workshop slides
-- [API Documentation](./docs/api.md) - Tool reference
 
 ## 🙏 Credits
 
@@ -245,6 +258,6 @@ MIT License - use this for anything!
 
 ---
 
-**Ready to build?** Star ⭐ this repo and [follow me](https://twitter.com/yourhandle) for more AI tutorials!
+**Ready to build?** Star ⭐ this repo and [follow me](https://linkedin.com/in/shepbryan) for more AI tutorials!
 
 Made with 💜 for the developer community
