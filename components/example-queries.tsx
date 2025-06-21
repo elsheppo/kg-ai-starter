@@ -20,12 +20,12 @@ const QUERIES = {
         purpose: "Searches for specific content in documents"
       },
       {
-        query: "What are the latest developments in space technology?",
-        purpose: "Finds relevant technology information"
+        query: "What does the Starship spacecraft do?",
+        purpose: "Finds information about space technology"
       },
       {
-        query: "Explain the history of Mars exploration",
-        purpose: "Retrieves historical information"
+        query: "Tell me about the Apollo program and moon landing",
+        purpose: "Retrieves historical space information"
       },
       {
         query: "How does the Artemis program work?",
@@ -39,16 +39,16 @@ const QUERIES = {
     description: 'Navigate and build knowledge graphs',
     queries: [
       {
-        query: "Show me all connections between NASA and SpaceX",
+        query: "Show me how NASA connects to the ISS",
         purpose: "Traverses relationships in the graph"
       },
       {
-        query: "Create a knowledge graph about Mars missions",
-        purpose: "Builds new graph structures"
+        query: "Show me all connections from SpaceX",
+        purpose: "Traverses the knowledge graph"
       },
       {
-        query: "What organizations are involved in space exploration?",
-        purpose: "Finds entities by type"
+        query: "Show me connections between Elon Musk and Mars",
+        purpose: "Explores multi-hop relationships"
       },
       {
         query: "Add Blue Origin to the graph and connect it to commercial space",
@@ -66,11 +66,11 @@ const QUERIES = {
         purpose: "Search + graph visualization"
       },
       {
-        query: "Build a knowledge graph from the space exploration timeline",
-        purpose: "Document analysis + graph creation"
+        query: "Find information about Laika and show related space history",
+        purpose: "Document search + graph connections"
       },
       {
-        query: "What technologies connect NASA and SpaceX, and what documents mention them?",
+        query: "How do NASA and SpaceX both relate to the ISS, and what documents mention this?",
         purpose: "Graph traversal + document search"
       },
       {
