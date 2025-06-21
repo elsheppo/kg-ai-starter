@@ -14,6 +14,7 @@ import {
   NodeTypes,
   Handle,
   Position,
+  MarkerType,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import dagre from 'dagre'
@@ -115,12 +116,15 @@ export function GraphVisualization({ data }: GraphVisualizationProps) {
       }))
 
       const flowEdges: Edge[] = data.edges.map((edge, idx) => ({
-        id: `e${edge.source}-${edge.target}`,
+        id: `edge-${idx}-${edge.source}-${edge.target}`,
         source: edge.source,
         target: edge.target,
         label: edge.label,
         type: 'smoothstep',
         animated: true,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+        },
       }))
 
       const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(

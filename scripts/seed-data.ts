@@ -84,6 +84,16 @@ async function seedNodes() {
   console.log('🌱 Seeding knowledge graph nodes...')
   
   for (const node of DEMO_NODES) {
+    // Create text representation for embedding
+    const nodeText = [
+      node.label,
+      node.type,
+      node.properties?.description || '',
+    ].filter(Boolean).join(' - ')
+    
+    // Generate embedding
+    const embedding = await generateEmbedding(nodeText)
+    
     const { error } = await supabase
       .from('kg_nodes')
       .insert({
@@ -91,6 +101,7 @@ async function seedNodes() {
         label: node.label,
         type: node.type,
         properties: node.properties,
+        embedding: embedding,
       })
     
     if (error) {
@@ -98,7 +109,7 @@ async function seedNodes() {
     }
   }
   
-  console.log(`✅ Inserted ${DEMO_NODES.length} nodes`)
+  console.log(`✅ Inserted ${DEMO_NODES.length} nodes with embeddings`)
 }
 
 async function seedEdges() {

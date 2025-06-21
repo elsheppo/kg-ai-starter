@@ -22,7 +22,25 @@ export async function GET() {
     
     if (edgesError) throw edgesError
     
-    return NextResponse.json({ nodes: nodes || [], edges: edges || [] })
+    // Transform edges to match the expected format
+    const transformedEdges = (edges || []).map(edge => ({
+      source: edge.source_id,
+      target: edge.target_id,
+      label: edge.relationship
+    }))
+    
+    // Transform nodes to include description from properties
+    const transformedNodes = (nodes || []).map(node => ({
+      id: node.id,
+      label: node.label,
+      type: node.type,
+      description: node.properties?.description
+    }))
+    
+    return NextResponse.json({ 
+      nodes: transformedNodes, 
+      edges: transformedEdges 
+    })
   } catch (error) {
     console.error('Failed to fetch graph data:', error)
     return NextResponse.json({ nodes: [], edges: [] }, { status: 500 })
