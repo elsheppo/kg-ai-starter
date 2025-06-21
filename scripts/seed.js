@@ -14,12 +14,17 @@ if (missing.length > 0) {
   process.exit(1)
 }
 
-// Register TypeScript
+// Register TypeScript with proper config
 require('ts-node').register({
   transpileOnly: true,
   compilerOptions: {
     module: 'commonjs',
     target: 'es2017',
+    moduleResolution: 'node',
+    allowJs: true,
+    esModuleInterop: true,
+    skipLibCheck: true,
+    strict: false
   }
 })
 
