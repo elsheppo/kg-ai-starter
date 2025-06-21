@@ -7,8 +7,8 @@ import OpenAI from 'openai'
 // Tool schemas
 const searchVectorSchema = z.object({
   query: z.string().describe('The search query'),
-  threshold: z.number().optional().default(0.7),
-  limit: z.number().optional().default(5),
+  threshold: z.number().optional().default(0.5),
+  limit: z.number().optional().default(10),
 })
 
 const searchGraphSchema = z.object({
@@ -79,11 +79,11 @@ export async function POST(req: Request) {
           // Generate embedding for query
           const embedding = await generateEmbedding(query)
           
-          // Search document chunks
+          // Search document chunks with lower threshold for better recall
           const { data, error } = await supabase.rpc('search_chunks_semantic', {
             query_embedding: embedding,
-            match_threshold: threshold || 0.7,
-            match_count: limit || 5,
+            match_threshold: threshold || 0.5,
+            match_count: limit || 10,
           })
 
           if (error) throw error
@@ -107,6 +107,10 @@ export async function POST(req: Request) {
         description: 'Traverse the knowledge graph starting from a node',
         parameters: searchGraphSchema,
         execute: async ({ nodeLabel, maxDepth }) => {
+          console.log('=== GRAPH TRAVERSAL DEBUG ===')
+          console.log('Looking for node:', nodeLabel)
+          console.log('Max depth:', maxDepth)
+          
           // First find the node
           const { data: nodes } = await supabase
             .from('kg_nodes')
@@ -115,8 +119,11 @@ export async function POST(req: Request) {
             .limit(1)
 
           if (!nodes || nodes.length === 0) {
+            console.log('Node not found!')
             return { error: 'Node not found' }
           }
+
+          console.log('Found node:', nodes[0].id, nodes[0].label)
 
           // Get connected nodes
           const { data, error } = await supabase.rpc('get_connected_nodes', {
@@ -124,7 +131,21 @@ export async function POST(req: Request) {
             max_depth: maxDepth,
           })
 
-          if (error) throw error
+          if (error) {
+            console.error('RPC Error:', error)
+            throw error
+          }
+          
+          console.log('Connected nodes found:', data?.length || 0)
+          if (data && data.length > 0) {
+            console.log('Connected nodes:')
+            data.forEach(node => {
+              console.log(`- ${node.label} (depth: ${node.depth})`)
+            })
+          }
+          
+          console.log('=== END TRAVERSAL DEBUG ===')
+          
           return { startNode: nodes[0], connectedNodes: data || [] }
         },
       }),
@@ -265,21 +286,32 @@ IMPORTANT: When providing information from documents, ALWAYS cite your sources:
 - If no sources found, state "No RAG sources found - this answer is from general knowledge"
 - This transparency proves whether information came from RAG or training data`,
     
-    graph: `You are a helpful AI assistant using GraphRAG. You navigate through a knowledge graph to find information and can create new nodes and relationships. Use the traverseGraph tool to explore connections, createNode/createEdge to build the graph, and updateGraph to visualize the current state. Always call updateGraph with operation: 'refresh' after creating nodes or edges to show the updated graph.
+    graph: `You are a helpful AI assistant using GraphRAG. You navigate through a knowledge graph to find information and can create new nodes and relationships when explicitly asked. 
 
-IMPORTANT: When providing information from the knowledge graph, ALWAYS cite your sources:
-- Mention which nodes you traversed and what relationships you followed
-- At the end of your response, include a "🕸️ Graph Path:" section
-- Show the path like: NASA → [operates] → ISS
-- This proves the information came from the graph, not your training data`,
+IMPORTANT RULES:
+1. ALWAYS try traverseGraph FIRST before creating anything new
+2. ONLY create new nodes/edges when:
+   - The user explicitly asks you to add something to the graph
+   - The user asks about something that doesn't exist and wants it added
+   - NEVER create nodes just because you're answering a question
+3. When providing information, ALWAYS cite your sources:
+   - Include a "🕸️ Graph Path:" section showing connections like: NASA → [operates] → ISS
+   - If no path exists, say "No graph connections found"
+4. Use updateGraph ONLY when you've made changes to the graph
+5. Be conservative - the graph should grow intentionally, not automatically`,
     
-    hybrid: `You are a helpful AI assistant using Hybrid RAG. You combine semantic search with graph traversal for the best results. You can search documents, search nodes semantically, traverse the graph, and create new knowledge connections. Use updateGraph to visualize the knowledge graph after making changes.
+    hybrid: `You are a helpful AI assistant using Hybrid RAG. You combine semantic search with graph traversal for the best results. You can search documents and traverse the graph to find information.
 
-IMPORTANT: When providing information, ALWAYS cite your sources clearly:
-- For document searches: Quote passages and include "🔍 Document Sources:"
-- For graph traversals: Show paths and include "🕸️ Graph Paths:"
-- For semantic node searches: Show matches and include "🎯 Matched Nodes:" with similarity scores
-- This transparency shows which RAG method provided each piece of information`,
+IMPORTANT RULES:
+1. ALWAYS search existing data FIRST (both documents and graph)
+2. ONLY create new nodes/edges when explicitly asked by the user
+3. NEVER automatically add to the graph just because you found new information
+4. When providing information, ALWAYS cite your sources clearly:
+   - For document searches: Quote passages and include "🔍 Document Sources:"
+   - For graph traversals: Show paths and include "🕸️ Graph Paths:"
+   - For semantic node searches: Show matches and include "🎯 Matched Nodes:" with similarity scores
+5. Use updateGraph ONLY when you've made changes to the graph
+6. Be conservative - prefer finding existing information over creating new content`,
   }
 
     const result = streamText({

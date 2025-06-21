@@ -93,7 +93,7 @@ RETURNS TABLE(
 WITH RECURSIVE node_graph AS (
     -- Base case: start node
     SELECT 
-        n.id,
+        n.id as node_id,
         n.label,
         n.type,
         n.properties,
@@ -105,18 +105,18 @@ WITH RECURSIVE node_graph AS (
     UNION ALL
     
     -- Recursive case: follow edges
-    SELECT 
-        n.id,
+    SELECT DISTINCT
+        n.id as node_id,
         n.label,
         n.type,
         n.properties,
         ng.depth + 1,
         ng.path || n.id
     FROM node_graph ng
-    JOIN kg_edges e ON (ng.id = e.source_id OR ng.id = e.target_id)
+    JOIN kg_edges e ON (ng.node_id = e.source_id OR ng.node_id = e.target_id)
     JOIN kg_nodes n ON (
-        (e.source_id = ng.id AND e.target_id = n.id) OR
-        (e.target_id = ng.id AND e.source_id = n.id)
+        (e.source_id = ng.node_id AND e.target_id = n.id) OR
+        (e.target_id = ng.node_id AND e.source_id = n.id)
     )
     WHERE ng.depth < $2
     AND NOT n.id = ANY(ng.path) -- Avoid cycles

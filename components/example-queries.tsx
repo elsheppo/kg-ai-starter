@@ -47,7 +47,7 @@ const QUERIES = {
         purpose: "Traverses the knowledge graph"
       },
       {
-        query: "Show me connections between Elon Musk and Mars",
+        query: "Show me how Elon Musk connects to Mars",
         purpose: "Explores multi-hop relationships"
       },
       {
